@@ -1,0 +1,18 @@
+[24-Apr-2014 18:36:23] PHP Warning:  include_once(include.php): failed to open stream: No such file or directory in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php on line 2
+[24-Apr-2014 18:36:23] PHP Stack trace:
+[24-Apr-2014 18:36:23] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php:0
+[24-Apr-2014 18:36:23] PHP Warning:  include_once(): Failed opening 'include.php' for inclusion (include_path='.:/usr/share/pear:/usr/share/php') in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php on line 2
+[24-Apr-2014 18:36:23] PHP Stack trace:
+[24-Apr-2014 18:36:23] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php:0
+[24-Apr-2014 18:36:23] PHP Fatal error:  Class 'PHPUnit_Framework_TestCase' not found in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php on line 8
+[24-Apr-2014 18:36:23] PHP Stack trace:
+[24-Apr-2014 18:36:23] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/SerieTest.php:0
+[27-Apr-2014 21:59:24] PHP Warning:  include_once(include.php): failed to open stream: No such file or directory in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php on line 2
+[27-Apr-2014 21:59:24] PHP Stack trace:
+[27-Apr-2014 21:59:24] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php:0
+[27-Apr-2014 21:59:24] PHP Warning:  include_once(): Failed opening 'include.php' for inclusion (include_path='.:/usr/share/pear:/usr/share/php') in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php on line 2
+[27-Apr-2014 21:59:24] PHP Stack trace:
+[27-Apr-2014 21:59:24] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php:0
+[27-Apr-2014 21:59:24] PHP Fatal error:  Class 'PHPUnit_Framework_TestCase' not found in /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php on line 8
+[27-Apr-2014 21:59:24] PHP Stack trace:
+[27-Apr-2014 21:59:24] PHP   1. {main}() /var/lib/stickshift/5352a0c350044645de0002bf/app-root/data/837797/Tests/AgentTest.php:0

@@ -1,0 +1,262 @@
+
+' Calcule une moyenne mobile
+Public Function buildMA(size As Integer) As Serie
+    Debug.Print ("buildMA" & size)
+    Set buildMA = New Serie
+    buildMA.Name = Me.Name & "MA" & size & " "
+    buildMA.fund = Me.fund
+   
+    Dim val1 As Val
+    Dim val2 As Val
+    Dim tmpSum As Double
+    Dim tmpVal As Val
+    Dim i As Integer
+   
+   
+    Set val1 = Me.LastVal
+    Set val2 = Me.LastVal
+    tmpSum = 0
+    i = 0
+   
+    While Not val2 Is Nothing
+        i = i + 1
+        'Debug.Print tmpSum & "+" & val2.value & "=" & tmpSum + val2.value
+        tmpSum = tmpSum + val2.value
+        If i >= size Then
+            Set tmpVal = New Val
+            tmpVal.value = tmpSum / size
+            tmpVal.DateVal = val1.DateVal
+            buildMA.addFirstVal v:=tmpVal
+           
+            'Debug.Print tmpVal.DateVal & " : " & tmpVal.value & " (" & tmpSum & "/" & size & ")"
+           
+            'Debug.Print tmpSum & "-" & val1.value & "=" & tmpSum + val1.value
+            tmpSum = tmpSum - val1.value
+            Set val1 = val1.PreviousVal
+        End If
+        Set val2 = val2.PreviousVal
+    Wend
+    'Debug.Print ("End buildMA" & size)
+End Function
+
+' Calcule (Vn)/(Vn-1)
+Public Function buildDerivative() As Serie
+    Debug.Print ("buildDerivative")
+    Set buildDerivative = New Serie
+    buildDerivative.Name = Me.Name & "DERIV "
+    buildDerivative.fund = Me.fund
+   
+    Dim val1 As Val
+    Dim tmpVal As Val
+   
+    Set val1 = Me.LastVal
+   
+    If val1 Is Nothing Then
+        Exit Function
+    End If
+   
+    ' First car on ne calcule pas sur la dernière valeur
+    While Not val1.isFirst
+        Set tmpVal = New Val
+        tmpVal.value = val1.value / val1.PreviousVal.value - 1
+        tmpVal.DateVal = val1.DateVal
+        buildDerivative.addFirstVal v:=tmpVal
+       
+        Set val1 = val1.PreviousVal
+    Wend
+   
+End Function
+
+' Calcule Vn/V(dernière valeur) -> dernière valeur de la série = 1
+' Permet de comparer la progression de chaque série sur un même graph
+Public Function buildRelative() As Serie
+    Debug.Print ("buildRelative")
+    Set buildRelative = New Serie
+    buildRelative.Name = Me.Name & "RELATIVE "
+    buildRelative.fund = Me.fund
+   
+   
+    Dim val1 As Val
+    Dim tmpVal As Val
+   
+    Set val1 = Me.LastVal
+   
+    While Not val1 Is Nothing
+        Set tmpVal = New Val
+        tmpVal.value = val1.value / Me.LastVal.value
+        tmpVal.DateVal = val1.DateVal
+        buildRelative.addFirstVal v:=tmpVal
+       
+        Set val1 = val1.PreviousVal
+    Wend
+End Function
+
+' Variance
+' http://fr.wikipedia.org/wiki/Variance_(statistiques_et_probabilit%C3%A9s)
+Public Function buildVariance(size As Integer) As Serie
+    Debug.Print ("buildVariance" & size)
+    Set buildVariance = New Serie
+    buildVariance.Name = Me.Name & "VAR" & size & " "
+    buildVariance.fund = Me.fund
+   
+    Dim serieMA As Serie
+    Set serieMA = buildMA(size)
+   
+   
+    Dim val1 As Val
+    Dim val2 As Val
+    Dim valMA As Val
+    Dim tmpSum As Double
+    Dim tmpVal As Val
+    Dim i As Integer
+   
+   
+    Set val1 = Me.LastVal
+    Set val2 = Me.LastVal
+    Set valMA = serieMA.LastVal
+    tmpSum = 0
+    i = 0
+   
+    While Not val2 Is Nothing
+        i = i + 1
+        tmpSum = tmpSum + val2.value ^ 2
+        If i >= size Then
+            Set tmpVal = New Val
+           
+            ' Equivalence de König-Huygens
+            ' bug 25/10/2013 sur le fond QS0009089333
+            ' -> pb d'arrondi -> 0 -> enregistre une valeur négative
+            Dim var As Double
+            var = tmpSum / size - valMA.value ^ 2
+            If var < 0 Then
+                var = 0
+            End If
+            tmpVal.value = var
+
+            'Debug.Print val1.DateVal & ":" & tmpSum & "/" & size & "-" & valMA.value ^ 2
+           
+            tmpVal.DateVal = val1.DateVal
+            buildVariance.addFirstVal v:=tmpVal
+           
+            tmpSum = tmpSum - val1.value ^ 2
+            Set val1 = val1.PreviousVal
+            Set valMA = valMA.PreviousVal
+        End If
+        Set val2 = val2.PreviousVal
+    Wend
+    'Debug.Print ("End buildVariance" & size)
+End Function
+
+' Ecart type
+' http://fr.wikipedia.org/wiki/%C3%89cart_type
+Public Function buildStandardDeviation(size As Integer) As Serie
+    Debug.Print ("buildStandardDeviation" & size)
+    Set buildStandardDeviation = New Serie
+    buildStandardDeviation.Name = Me.Name & "STDD" & size & " "
+    buildStandardDeviation.fund = Me.fund
+       
+    Dim serieVAR As Serie
+    Set serieVAR = buildVariance(size)
+   
+    Dim val1 As Val
+    Set val1 = serieVAR.FirstVal
+   
+    Dim tmpVal As Val
+   
+    While Not val1 Is Nothing
+        Set tmpVal = New Val
+        ' Debug.Print ("AddLast:" & val1.value & " (" & val1.DateVal & ")")
+        ' peut bugger si la valeur est négative (racine carrée Réelle)
+        tmpVal.value = Sqr(val1.value)
+        'Debug.Print ("->" & Sqr(val1.value))
+        tmpVal.DateVal = val1.DateVal
+        buildStandardDeviation.addLastVal v:=tmpVal
+   
+        Set val1 = val1.NextVal
+    Wend
+    'Debug.Print ("End buildStandardDeviation" & size)
+End Function
+
+' Pour toutes les valeurs, (Serie me) - (Serie oSerie)
+Public Function buildDifference(oSerie As Serie) As Serie
+    Debug.Print ("buildDifference between " & Me.Name & " and " & oSerie.Name)
+    Set buildDifference = New Serie
+    buildDifference.Name = Me.Name & " DIFF " & oSerie.Name & " "
+    buildDifference.fund = Me.fund
+       
+    Dim val1 As Val
+    Set val1 = Me.LastVal
+    Dim val2 As Val
+    Set val2 = oSerie.LastVal
+   
+    Dim tmpVal As Val
+   
+    While Not val1 Is Nothing _
+    And Not val2 Is Nothing
+        Set tmpVal = New Val
+        tmpVal.DateVal = val1.DateVal
+        tmpVal.value = val1.value - val2.value
+        buildDifference.addFirstVal v:=tmpVal
+       
+        ' Debug.Print (val1.DateVal & ":" & val1.value & " - " & val2.value & " = " & tmpVal.value)
+       
+        Set val1 = val1.PreviousVal
+        Set val2 = val2.PreviousVal
+    Wend
+End Function
+
+' Effectue le produit de chacune des valeurs par un multiplieur
+Public Function buildMult(multiplier As Double)
+    Debug.Print ("buildMult " & Me.Name & " X " & multiplier)
+    Set buildMult = New Serie
+    buildMult.Name = Me.Name & "X" & multiplier & " "
+    buildMult.fund = Me.fund
+
+    Dim val1 As Val
+    Set val1 = Me.LastVal
+   
+    Dim tmpVal As Val
+    While Not val1 Is Nothing
+        Set tmpVal = New Val
+        tmpVal.DateVal = val1.DateVal
+        tmpVal.value = val1.value * multiplier
+        buildMult.addFirstVal v:=tmpVal
+        Set val1 = val1.PreviousVal
+    Wend
+End Function
+
+Public Function buildRelativeStopLoss() As Serie
+    Debug.Print ("buildStopLost " & Me.Name)
+    Set buildRelativeStopLoss = New Serie
+    buildRelativeStopLoss.Name = Me.Name & "RSL "
+    buildRelativeStopLoss.fund = Me.fund
+
+    Dim val1 As Val
+    Set val1 = Me.FirstVal
+   
+    Dim trigger As Double
+    trigger = val1.value * 0.95
+   
+    Dim tmpVal As Val
+    While Not val1 Is Nothing
+        Set tmpVal = New Val
+        tmpVal.DateVal = val1.DateVal
+       
+        ' normal progression
+        If val1.value * 0.95 > trigger Then
+            trigger = val1.value * 0.95
+        End If
+        ' if stop was yesterday -> fix new one
+        If Not val1.PreviousVal Is Nothing Then
+            If val1.PreviousVal.value < trigger Then
+                trigger = val1.value * 0.95
+            End If
+        End If
+       
+        tmpVal.value = trigger
+       
+        buildRelativeStopLoss.addLastVal v:=tmpVal
+       
+        Set val1 = val1.NextVal
+    Wend
+End Function
