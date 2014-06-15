@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<agent yahooId="ACA.PA" result="0.97994768962511" count="14" countMovements="1" reference="1.0071684587814">
+  <buyStrategy>
+    <serie name="sve\serie\Substract">
+      <serie name="sve\serie\MobileAverage" size="3">
+        <serie name="sve\serie\Closing" yahooId="ACA.PA"/>
+      </serie>
+      <subserie>
+        <serie name="sve\serie\MobileAverage" size="12">
+          <serie name="sve\serie\Closing" yahooId="ACA.PA"/>
+        </serie>
+      </subserie>
+    </serie>
+  </buyStrategy>
+  <sellStrategy>
+    <serie name="sve\serie\Substract">
+      <serie name="sve\serie\MobileAverage" size="6">
+        <serie name="sve\serie\Closing" yahooId="ACA.PA"/>
+      </serie>
+      <subserie>
+        <serie name="sve\serie\MobileAverage" size="3">
+          <serie name="sve\serie\Closing" yahooId="ACA.PA"/>
+        </serie>
+      </subserie>
+    </serie>
+  </sellStrategy>
+</agent>
