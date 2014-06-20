@@ -59,4 +59,24 @@ class Substract extends \sve\AbstractSerie
 
         return $node;
     }
+
+	public static function parseXml(\DOMElement $element)
+	{
+		// Getting subserie
+		$xSubserie = $element->getElementsByTagName('subserie')->item(0)
+			->getElementsByTagName('serie')->item(0);
+		$classname='\\'.$xSubserie->getAttribute('name');
+		
+    	$reflectionMethod = new \ReflectionMethod($classname, 'parseXml');
+    	$subserie = $reflectionMethod->invoke(null,$element);
+    	
+		// Going deeper
+		$element = $element->getElementsByTagName('serie')->item(0);
+		$classname='\\'.$element->getAttribute('name');
+		
+    	$reflectionMethod = new \ReflectionMethod($classname, 'parseXml');
+    	$parent = $reflectionMethod->invoke(null,$element);
+    	
+    	return new self($parent, $subserie);
+	}
 }

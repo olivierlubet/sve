@@ -7,6 +7,7 @@ class Closing extends \sve\AbstractSerie
 {
     private $data;
     private $yahooId;
+    private $period;
 
     public function getName(){return "Closing[".$this->getYahooId()."]";}
     public function getFullName() {return $this->getName();}
@@ -18,6 +19,7 @@ class Closing extends \sve\AbstractSerie
         parent::__construct();
 
         $this->yahooId=$yahooId;
+        $this->period = $period;
 
         $s = new \sve\Security($yahooId, $period);
         $this->data=$s->getData();
@@ -49,7 +51,17 @@ class Closing extends \sve\AbstractSerie
         $node = parent::getXmlNode($doc);
         $node->appendChild($doc->createAttribute('yahooId'))
             ->value=$this->yahooId;
+        $node->appendChild($doc->createAttribute('period'))
+            ->value=$this->period;
 
         return $node;
+    }
+    
+    public static function parseXml(\DOMElement $element)
+    {
+    	$yahooId=$element->getAttribute('yahooId');
+    	$period=$element->getAttribute('period');
+    	
+    	return new self($parent,intval($period));
     }
 }

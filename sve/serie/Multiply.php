@@ -50,4 +50,17 @@ class Multiply extends \sve\AbstractSerie
 
         return $node;
     }
+    
+    public static function parseXml(\DOMElement $element)
+    {
+    	$multiplicator=$element->getAttribute('multiplicator');
+    	// Going deeper
+    	$element = $element->getElementsByTagName('serie')->item(0);
+    	$classname='\\'.$element->getAttribute('name');
+    
+    	$reflectionMethod = new \ReflectionMethod($classname, 'parseXml');
+    	$parent = $reflectionMethod->invoke(null,$element);
+    
+    	return new self($parent,intval($multiplicator));
+    }
 }

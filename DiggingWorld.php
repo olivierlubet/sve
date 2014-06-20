@@ -4,7 +4,7 @@ include_once("include.php");
 if ($argc < 3 ) {
 	?>
 
-C'est une ligne de commande à deux options. Utilisation :
+Commande à deux options. Utilisation :
 <?php echo $argv[0]; ?> population period 
 
 population Integer : 3 
@@ -34,7 +34,7 @@ period Integer : 90
 		for($i=0;$i<$nbToSave;$i++)
 		{
 			$agent= $pop[$i];
-			$agent->save();
+			sve\AgentFactory::save($agent);
 			echo $agent->getName().":\t".$agent->getLast()->getValue()."\n";
 		}
 	}

@@ -21,11 +21,11 @@ class AgentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Adam',$s->getName());
         $this->assertEquals(1,$s->getGeneration());
         $this->assertGreaterThan(0,$s->count());
-        $this->assertGreaterThan(0,$s->getLast()->getValue());
+        $this->assertGreaterThan(0,$s->getResult());
 
         if(self::VERBOSE)
         {
-            echo "Adam ".$s->getLast()->getValue()."\n";
+            echo "Adam ".$s->getResult()."\n";
         }
     }
 
@@ -36,11 +36,11 @@ class AgentTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($s);
         $this->assertEquals('Eve',$s->getName());
         $this->assertGreaterThan(0,$s->count());
-        $this->assertGreaterThan(0,$s->getLast()->getValue());
+        $this->assertGreaterThan(0,$s->getResult());
 
         if(self::VERBOSE)
         {
-            echo "Eve ".$s->getLast()->getValue()."\n";
+            echo "Eve ".$s->getResult()."\n";
         }
     }
 
@@ -51,12 +51,12 @@ class AgentTest extends PHPUnit_Framework_TestCase
         $this->assertNotNull($s);
         $this->assertEquals('Cain',$s->getName());
         $this->assertGreaterThan(0,$s->count());
-        $this->assertGreaterThan(0,$s->getLast()->getValue());
+        $this->assertGreaterThan(0,$s->getResult());
 
 
         if(self::VERBOSE)
         {
-            echo "Cain ".$s->getLast()->getValue()."\n";
+            echo "Cain ".$s->getResult()."\n";
             //echo "Cain\n".$s;
         }
     }
@@ -73,9 +73,9 @@ class AgentTest extends PHPUnit_Framework_TestCase
 
         if(self::VERBOSE)
         {
-            echo "Adam' ".$s1->getLast()->getValue()."\n";
-            echo "Eve' ".$s2->getLast()->getValue()."\n";
-            echo "Cain' ".$s3->getLast()->getValue()."\n";
+            echo "Adam' ".$s1->getResult()."\n";
+            echo "Eve' ".$s2->getResult()."\n";
+            echo "Cain' ".$s3->getResult()."\n";
         }
     }
 
@@ -96,19 +96,9 @@ class AgentTest extends PHPUnit_Framework_TestCase
 
         if(self::VERBOSE)
         {
-            echo $s4->getName().' '.$s4->getLast()->getValue()."\n";
-            echo $s5->getName().' '.$s5->getLast()->getValue()."\n";
+            echo $s4->getName().' '.$s4->getResult()."\n";
+            echo $s5->getName().' '.$s5->getResult()."\n";
         }
-    }
-
-    public function testSave()
-    {
-        $s1 = new \sve\agent\Adam('ACA.PA',20);
-        $s2 = new \sve\agent\Eve('ACA.PA',20);
-        $s3 = new \sve\agent\Cain('ACA.PA',20);
-        $s1->save();
-        $s2->save();
-        $s3->save();
     }
 
     public function testNameManager()

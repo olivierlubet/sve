@@ -5,6 +5,8 @@ use sve\World;
 
 class WorldTest extends PHPUnit_Framework_TestCase
 {
+    const VERBOSE=false;
+    
     public function testWorld()
     {
         $w = new World('ACA.PA',5,50);
@@ -15,13 +17,14 @@ class WorldTest extends PHPUnit_Framework_TestCase
 
         $w->compute(1);
         $this->assertEquals(5,count($w->getPopulation()));
-
+        
+        if(self::VERBOSE)
         foreach($w->getPopulation() as $agent)
         {
-            //echo $agent->getName().":".$agent->getLast()->getValue()."\n";
+            echo $agent->getName().":".$agent->getLast()->getValue()."\n";
         }
         
         $pop=$w->getPopulation();
-        $pop[0]->save();
+        sve\AgentFactory::save($pop[0]);
     }
 }

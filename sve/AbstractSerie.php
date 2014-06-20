@@ -1,7 +1,6 @@
 <?php
 namespace sve;
 
-
 abstract class AbstractSerie
 {
     private $parent = null;
@@ -10,7 +9,6 @@ abstract class AbstractSerie
     private $count=0;
 
     abstract public function getName();
-    abstract public function buildAllele();
 
     public function __construct(\sve\AbstractSerie $parent=null)
     {
@@ -61,8 +59,14 @@ abstract class AbstractSerie
         $this->count++;
     }
 
-    // Chain building
-    public function build($serie, $args=array())
+    /**
+     * Chain building
+     * 
+     * @param AbstractSerie $serie
+     * @param array $args
+     * @return AbstractSerie
+     */
+    public function build(AbstractSerie $serie, Array $args=array())
     {
         // Passing $this as parent in first argument
         $args=array_reverse ($args);
@@ -74,6 +78,7 @@ abstract class AbstractSerie
         $class = new \ReflectionClass($classname);
         return $class->newInstanceArgs($args);
     }
+    
 
     public function __toString()
     {
@@ -85,20 +90,11 @@ abstract class AbstractSerie
         }
         return $ret;
     }
-
-    public function getXmlNode(\DOMDocument $doc)
+    
+    public function buildAllele()
     {
-        $node = $doc->createElement("serie");
-        $node->appendChild($doc->createAttribute('name'))
-            ->value=get_class($this);
-
-        if (!is_null($this->getParent()))
-        {
-            $node->appendChild(
-                $this->getParent()->getXmlNode($doc)
-                );
-        }
-        return $node;
+    	$classname=get_class($this);
+        return new $classname($this->getParent()->buildAllele());
     }
     
     public function performance($depth)
@@ -114,4 +110,41 @@ abstract class AbstractSerie
         }
         return $current->getValue()/$reference->getValue();
     }
+
+    public function getXmlNode(\DOMDocument $doc)
+    {
+        $node = $doc->createElement("serie");
+        $classname=get_class($this);
+        $node->appendChild($doc->createAttribute('name'))
+            ->value=$classname ;
+
+        if (!is_null($this->getParent()))
+        {
+            $node->appendChild(
+                $this->getParent()->getXmlNode($doc)
+                );
+        }
+        return $node;
+    }
+    
+    public static function parseXml(\DOMElement $element)
+    {
+    	// Going deeper
+    	$element = $element->getElementsByTagName('serie')->item(0);
+    	$classname='\\'.$element->getAttribute('name');
+    
+    	$reflectionMethod = new \ReflectionMethod($classname, 'parseXml');
+    	$parent = $reflectionMethod->invoke(null,$element);
+    	 
+    	$classname=get_called_class();
+    	return new $classname($parent);
+    }
+    
+    public static function buildFromXml(\DOMElement $element)
+    {
+    	$classname='\\'.$element->getAttribute('name');
+    	$reflectionMethod = new \ReflectionMethod($classname, 'parseXml');
+    	return $reflectionMethod->invoke(null,$element);
+    }
+    
 }

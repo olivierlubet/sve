@@ -33,8 +33,5 @@ class Relative extends \sve\AbstractSerie
     }
 
 
-    public function buildAllele()
-    {
-        return new Relative($this->getParent()->buildAllele());
-    }
+    
 }

@@ -34,8 +34,4 @@ class Derived extends \sve\AbstractSerie
         }
     }
 
-    public function buildAllele()
-    {
-        return new Derived($this->getParent()->buildAllele());
-    }
 }
